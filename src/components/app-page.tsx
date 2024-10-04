@@ -24,7 +24,7 @@ export function Page() {
             <Link href="/signin">Sign In</Link>
           </Button>
           <Button asChild>
-            <Link href="/signup">Sign Up</Link>
+            <Link href="/home">Get Started</Link>
           </Button>
         </nav>
       </header>
@@ -42,7 +42,7 @@ export function Page() {
               </div>
               <div className="space-x-4">
                 <Button asChild>
-                  <Link href="/signup">Get Started</Link>
+                  <Link href="/home">Get Started</Link>
                 </Button>
                 <Button variant="outline">Learn More</Button>
               </div>
@@ -129,7 +129,9 @@ export function Page() {
               <div className="w-full max-w-sm space-y-2">
                 <form className="flex space-x-2">
                   <Input className="max-w-lg flex-1" placeholder="Enter your email" type="email" />
-                  <Button type="submit">Get Started</Button>
+                  <Button type="submit" asChild>
+                    <Link href="/home">Get Started</Link>
+                  </Button>
                 </form>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Start your free trial. No credit card required.

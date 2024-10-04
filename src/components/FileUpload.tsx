@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Upload } from "lucide-react"
+import { Upload, X } from "lucide-react"
 import toast, { Toaster } from 'react-hot-toast'
 
 interface SummaryData {
@@ -19,8 +19,17 @@ export function FileUpload({ onSummaryReceived }: { onSummaryReceived: (data: Su
   const [isUploading, setIsUploading] = useState(false)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0])
+    }
+  }
+
+  const handleRemoveFile = () => {
+    setFile(null)
+    // Reset the file input
+    const fileInput = document.getElementById('file') as HTMLInputElement
+    if (fileInput) {
+      fileInput.value = ''
     }
   }
 
@@ -74,8 +83,29 @@ export function FileUpload({ onSummaryReceived }: { onSummaryReceived: (data: Su
       <Toaster position="top-right" />
       <div className="grid w-full max-w-sm items-center gap-1.5">
         <Label htmlFor="file">Upload PDF, DOCX, or TXT</Label>
-        <Input id="file" type="file" accept=".pdf,.docx,.txt" onChange={handleFileChange} />
+        <div className="flex items-center space-x-2">
+          <Input 
+            id="file" 
+            type="file" 
+            accept=".pdf,.docx,.txt" 
+            onChange={handleFileChange} 
+            className="flex-grow"
+          />
+          {file && (
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={handleRemoveFile}
+              title="Remove file"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
+      {file && (
+        <p className="text-sm text-gray-500">Selected file: {file.name}</p>
+      )}
       <Button onClick={handleUpload} disabled={!file || isUploading}>
         <Upload className="mr-2 h-4 w-4" /> {isUploading ? "Processing..." : "Upload and Process"}
       </Button>

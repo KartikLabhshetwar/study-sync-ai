@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+
+// In-memory storage for file contents
+const fileStorage: { [fileName: string]: Buffer } = {};
 
 export async function POST(request: Request) {
   const data = await request.formData();
@@ -13,23 +14,11 @@ export async function POST(request: Request) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  // Create the 'uploads' directory if it doesn't exist
-  const uploadDir = join(process.cwd(), 'uploads');
-  try {
-    await mkdir(uploadDir, { recursive: true });
-  } catch (error) {
-    console.error('Error creating upload directory:', error);
-    return NextResponse.json({ success: false, message: "Error creating upload directory" }, { status: 500 });
-  }
-
-  // Save the file to the 'uploads' directory
-  const path = join(uploadDir, file.name);
-  try {
-    await writeFile(path, buffer);
-  } catch (error) {
-    console.error('Error writing file:', error);
-    return NextResponse.json({ success: false, message: "Error saving file" }, { status: 500 });
-  }
+  // Store the file content in memory
+  fileStorage[file.name] = buffer;
 
   return NextResponse.json({ success: true, message: "File uploaded successfully", fileName: file.name });
 }
+
+// Export the fileStorage for use in other routes
+export { fileStorage };

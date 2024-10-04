@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { readFile } from 'fs/promises';
-import { join } from 'path';
+import { fileStorage } from "../upload/route";
 
 // Access your API key as an environment variable
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -14,8 +13,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const filePath = join(process.cwd(), 'uploads', fileName);
-    const fileContent = await readFile(filePath);
+    const fileContent = fileStorage[fileName];
+
+    if (!fileContent) {
+      return NextResponse.json({ success: false, message: "File not found" }, { status: 404 });
+    }
 
     // Choose a Gemini model
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
